@@ -9,14 +9,14 @@ packages = [{include = "sumoexporter"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-yaramo = {git = "https://github.com/antonykamp/yaramo", branch="refactor/replace-connected-nodes-with-edges"}
+yaramo = {git = "https://github.com/bp2022-ap1/yaramo", branch="refactor/replace-connected-nodes-with-edges"}
 
 [tool.poetry.group.example]
 optional = true
 
 [tool.poetry.group.example.dependencies]
-planpro_importer = {git = "https://github.com/antonykamp/planpro-importer", branch="refactor/replace-connected-nodes-edges"}
-railway-route-generator = {git = "https://github.com/antonykamp/railway-route-generator", branch="refactor/replace-connected-nodes-edges"}
+planpro_importer = {git = "https://github.com/bp2022-ap1/planpro-importer", branch="refactor/replace-connected-nodes-edges"}
+railway-route-generator = {git = "https://github.com/bp2022-ap1/railway-route-generator", branch="refactor/replace-connected-nodes-edges"}
 
 [build-system]
 requires = ["poetry-core"]
