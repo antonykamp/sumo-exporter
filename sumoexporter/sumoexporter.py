@@ -113,31 +113,33 @@ class SUMOExporter(object):
 
             cur_track_obj.right_point = node_b
 
-            anschluss_a = NodeConnectionDirection.Spitze
+            anschluesse_a = [NodeConnectionDirection.Spitze]
             if len(yaramo_node_a.connected_nodes) == 3:
-                anschluss_a = yaramo_node_a.get_anschluss_of_other(yaramo_node_b)
+                anschluesse_a = yaramo_node_a.get_anschluss_of_other(yaramo_node_b)
 
-            anschluss_b = NodeConnectionDirection.Spitze
+            anschluesse_b = [NodeConnectionDirection.Spitze]
             if len(yaramo_node_b.connected_nodes) == 3:
-                anschluss_b = yaramo_node_b.get_anschluss_of_other(yaramo_node_a)
+                anschluesse_b = yaramo_node_b.get_anschluss_of_other(yaramo_node_a)
+            
+            for anschluss in anschluesse_a:
+                if anschluss == NodeConnectionDirection.Spitze:
+                    node_a.head = tracks_in_order[0]
+                elif anschluss == NodeConnectionDirection.Links:
+                    node_a.left = tracks_in_order[0]
+                elif anschluss == NodeConnectionDirection.Rechts:
+                    node_a.right = tracks_in_order[0]
+                else:
+                    raise ValueError("Topology broken. Anschluss not found.")
 
-            if anschluss_a == NodeConnectionDirection.Spitze:
-                node_a.head = tracks_in_order[0]
-            elif anschluss_a == NodeConnectionDirection.Links:
-                node_a.left = tracks_in_order[0]
-            elif anschluss_a == NodeConnectionDirection.Rechts:
-                node_a.right = tracks_in_order[0]
-            else:
-                raise ValueError("Topology broken. Anschluss not found.")
-
-            if anschluss_b == NodeConnectionDirection.Spitze:
-                node_b.head = tracks_in_order[-1]
-            elif anschluss_b == NodeConnectionDirection.Links:
-                node_b.left = tracks_in_order[-1]
-            elif anschluss_b == NodeConnectionDirection.Rechts:
-                node_b.right = tracks_in_order[-1]
-            else:
-                raise ValueError("Topology broken. Anschluss not found.")
+            for anchluss in anschluesse_b:
+                if anschluss == NodeConnectionDirection.Spitze:
+                    node_b.head = tracks_in_order[-1]
+                elif anschluss == NodeConnectionDirection.Links:
+                    node_b.left = tracks_in_order[-1]
+                elif anschluss == NodeConnectionDirection.Rechts:
+                    node_b.right = tracks_in_order[-1]
+                else:
+                    raise ValueError("Topology broken. Anschluss not found.")
 
             self.tracks[yaramo_edge.uuid] = tracks_in_order
 
