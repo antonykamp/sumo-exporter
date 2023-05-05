@@ -131,7 +131,7 @@ class SUMOExporter(object):
                 else:
                     raise ValueError("Topology broken. Anschluss not found.")
 
-            for anchluss in anschluesse_b:
+            for anschluss in anschluesse_b:
                 if anschluss == NodeConnectionDirection.Spitze:
                     node_b.head = tracks_in_order[-1]
                 elif anschluss == NodeConnectionDirection.Links:
@@ -203,7 +203,7 @@ class SUMOExporter(object):
 
             return _track_ids
 
-        for yaramo_route in self.topology.routes:
+        for yaramo_route in self.topology.routes.values():
             route = Route(yaramo_route.uuid)
 
             # Start and End Signal
