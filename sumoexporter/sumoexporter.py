@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 from .model import Point, Track, Route, Signal
 from .sumohelper import SUMOHelper
@@ -113,33 +114,35 @@ class SUMOExporter(object):
 
             cur_track_obj.right_point = node_b
 
-            anschluesse_a = [NodeConnectionDirection.Spitze]
+            anschluss_a = NodeConnectionDirection.Spitze
             if len(yaramo_node_a.connected_nodes) == 3:
-                anschluesse_a = yaramo_node_a.get_anschluss_of_other(yaramo_node_b)
+                anschluss_a = yaramo_node_a.get_anschluss_for_edge(yaramo_edge)
+                #anschluesse_a = yaramo_node_a.get_anschluss_of_other(yaramo_node_b)
 
-            anschluesse_b = [NodeConnectionDirection.Spitze]
+            anschluss_b = NodeConnectionDirection.Spitze
             if len(yaramo_node_b.connected_nodes) == 3:
-                anschluesse_b = yaramo_node_b.get_anschluss_of_other(yaramo_node_a)
+                anschluss_b = yaramo_node_b.get_anschluss_for_edge(yaramo_edge)
+                #anschluesse_b = yaramo_node_b.get_anschluss_of_other(yaramo_node_a)
             
-            for anschluss in anschluesse_a:
-                if anschluss == NodeConnectionDirection.Spitze:
-                    node_a.head = tracks_in_order[0]
-                elif anschluss == NodeConnectionDirection.Links:
-                    node_a.left = tracks_in_order[0]
-                elif anschluss == NodeConnectionDirection.Rechts:
-                    node_a.right = tracks_in_order[0]
-                else:
-                    raise ValueError("Topology broken. Anschluss not found.")
+            #for anschluss in anschluesse_a:
+            if anschluss_a == NodeConnectionDirection.Spitze:
+                node_a.head = tracks_in_order[0]
+            elif anschluss_a == NodeConnectionDirection.Links:
+                node_a.left = tracks_in_order[0]
+            elif anschluss_a == NodeConnectionDirection.Rechts:
+                node_a.right = tracks_in_order[0]
+            else:
+                raise ValueError("Topology broken. Anschluss not found.")
 
-            for anschluss in anschluesse_b:
-                if anschluss == NodeConnectionDirection.Spitze:
-                    node_b.head = tracks_in_order[-1]
-                elif anschluss == NodeConnectionDirection.Links:
-                    node_b.left = tracks_in_order[-1]
-                elif anschluss == NodeConnectionDirection.Rechts:
-                    node_b.right = tracks_in_order[-1]
-                else:
-                    raise ValueError("Topology broken. Anschluss not found.")
+            #for anschluss in anschluesse_b:
+            if anschluss_b == NodeConnectionDirection.Spitze:
+                node_b.head = tracks_in_order[-1]
+            elif anschluss_b == NodeConnectionDirection.Links:
+                node_b.left = tracks_in_order[-1]
+            elif anschluss_b == NodeConnectionDirection.Rechts:
+                node_b.right = tracks_in_order[-1]
+            else:
+                raise ValueError("Topology broken. Anschluss not found.")
 
             self.tracks[yaramo_edge.uuid] = tracks_in_order
 
@@ -176,7 +179,7 @@ class SUMOExporter(object):
                     _next_track = None
                     for _yaramo_edge in _yaramo_edges_in_order:
                         if _yaramo_edge.uuid != _cur_top_kante_uuid:
-                            _next_track = _next_point.get_connected_node(_yaramo_edge.uuid)
+                            _next_track = _next_point.get_connected_track(_yaramo_edge.uuid)
                             if _next_track is not None:
                                 break
 
@@ -216,8 +219,7 @@ class SUMOExporter(object):
             route.update_id()
 
             # Tracks
-            route.track_ids = _get_track_ids_in_order(route.start_signal, route.end_signal,
-                                                      yaramo_route.get_edges_in_order())
+            route.track_ids = _get_track_ids_in_order(route.start_signal, route.end_signal, yaramo_route.get_edges_in_order())
             self.routes[yaramo_route.uuid] = route
 
     def write_output(self, output_format="sumo-plain-xml"):
